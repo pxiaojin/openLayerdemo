@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>openlayer-demo</title>
+    <link rel="stylesheet" href="./lib/v6.1.1-dist/ol.css">
+    <script type="text/javascript" src="./lib/v6.1.1-dist/ol-debug.js" charset="utf-8"></script>
+    <script type="text/javascript" src="./lib/jquery-1.11.1.min.js"></script>
+    <style>
+        #map {
+            width: 80%;
+            height: 400px;
+        }
+    </style>
+</head>
+
+<body>
+    <p>地图1</p>
+    <div id="map"></div>
+    <button id="point">point</button>
+    <button id="circle">circle</button>
+    <button id="img">img</button>
+
+    <script type="text/javascript">
+        // 创建图层
+        var osmLayer = new ol.layer.Tile({
+            source: new ol.source.OSM()
+        });
+        var pointLayer = new ol.layer.Vector({
+            source: new ol.source.Vector()
+        });
+        var circleLayer = new ol.layer.Vector({
+            source: new ol.source.Vector()
+        });
+        var imgLayer = new ol.layer.Vector({
+            source: new ol.source.Vector()
+        })
+        // 创建地图1
+        var map = new ol.Map({
+            // logo: {src: '../img/face_monkey.png', href: 'http://www.openstreetmap.org/'},可设置跳转地址
+            logo: './img/logo.png',
+            // 设置地图图层
+            layers: [osmLayer, imgLayer, pointLayer, circleLayer],
+            // 设置显示地图的视图
+            view: new ol.View({
+                center: [0, 0],
+                zoom: 2,
+            }),
+            // 让id为map的div作为地图的容器
+            target: 'map'
+        })
+        // img
+        var img = new ol.Feature({
+            geometry: new ol.geom.Point([0, 0])
+        })
+        img.setStyle(new ol.style.Style({
+            image: new ol.style.Icon({
+                src: './img/logo.png',
+                anchor: [1, 2],   // 设置图标位置
+                scale: 0.5
+            }),
+            text: new ol.style.Text({
+                text: 'hello,我是图片',
+                offsetX: -50,
+                offsetY: -50
+            })
+        }))
+        imgLayer.getSource().addFeature(img)
+        // point
+        var point = new ol.Feature({
+            geometry: new ol.geom.Point(ol.proj.fromLonLat([20,20]))
+            
+        })
+        point.setStyle(new ol.style.Style({
+            image: new ol.style.Circle({
+                radius: 10,
+                fill: new ol.style.Fill({
+                    color: 'red'
+                }),
+                stroke: new ol.style.Stroke({
+                    color: 'red',
+                    size: 1
+                })
+            }),
+            text: new ol.style.Text({
+                text: 'hello,我是点',
+            })
+        }))
+        pointLayer.getSource().addFeature(point)
+        // circle
+        var circle = new ol.Feature({
+            geometry: new ol.geom.Point([0, 0])
+        })
+        circle.setStyle(new ol.style.Style({
+            image: new ol.style.Circle({
+                radius: 20,
+                stroke: new ol.style.Stroke({
+                    color: 'black',
+                    size: 2
+                })
+            }),
+            text: new ol.style.Text({
+                text: 'hello,我是圆',
+                offsetY: -30
+            })
+        }))
+        circleLayer.getSource().addFeature(circle)
+
+        $('#point').on('click', function () {
+            if (pointLayer.getVisible()) {
+                pointLayer.setVisible(false)
+            } else {
+                pointLayer.setVisible(true)
+            }
+        })
+        $('#circle').on('click', function () {
+            if (circleLayer.getVisible()) {
+                circleLayer.setVisible(false)
+            } else {
+                circleLayer.setVisible(true)
+            }
+        })
+        $('#img').on('click', function () {
+            if (imgLayer.getVisible()) {
+                imgLayer.setVisible(false)
+            } else {
+                imgLayer.setVisible(true)
+            }
+        })
+        // 监听地图层级变化
+        map.getView().on('change:resolution', function () {
+            var style = img.getStyle();
+            // 重新设置图标的缩放率，基于层级10来做缩放
+            style.getImage().setScale(this.getZoom() / 10);
+            img.setStyle(style);
+        })
+    </script>
+</body>
+
+</html>

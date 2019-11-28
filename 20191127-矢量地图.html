@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>openlayer-demo</title>
+    <link rel="stylesheet" href="./lib/v6.1.1-dist/ol.css">
+    <script type="text/javascript" src="./lib/v6.1.1-dist/ol-debug.js" charset="utf-8"></script>
+    <script type="text/javascript" src="./lib/jquery-1.11.1.min.js"></script>
+    <style>
+        #map1 {
+            width: 80%;
+            height: 400px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="map"></div>
+    <script type="text/javascript">
+        var openStreetMapLayer = new ol.layer.Tile({
+            source: new ol.source.XYZ({
+                url: 'http://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+            })
+        });
+        //创建地图
+        var map = new ol.Map({
+            layers: [
+                // 底图用Open Street Map 地图
+                openStreetMapLayer
+                // 再加载一个geojson的矢量地图
+                // new ol.layer.Vector({
+                //     source: new ol.source.Vector({
+                //         url: '../data/geojson/line-samples.geojson',     // 地图来源
+                //         format: new ol.format.GeoJSON()    // 解析矢量地图的格式化类
+                //     })
+                // })
+            ],
+            view: new ol.View({
+                center: [104.06, 30.67],
+                projection: 'EPSG:4326',
+                zoom: 10
+            }),
+            target: 'map'
+        });
+        var layerStroke = new ol.layer.Vector({
+            style: new ol.style.Style({
+                stroke: new ol.style.Stroke({
+                    color: 'red',
+                    size: 2
+                })
+            })
+        })
+        map.addLayer(layerStroke)
+
+
+    </script>
+</body>
+
+</html>
